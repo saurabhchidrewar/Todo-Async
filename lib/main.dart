@@ -27,11 +27,16 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends ConsumerWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _HomePageState();
+}
+
+class _HomePageState extends ConsumerState<HomePage> {
+  @override
+  Widget build(BuildContext context) {
     AsyncValue<List<Todo>> todos = ref.watch(todoStateFuture);
     return Scaffold(
       appBar: AppBar(
@@ -51,10 +56,20 @@ class HomePage extends ConsumerWidget {
                         style: TextStyle(color: Colors.black),
                       ),
                     ),
-                    title: Text(todos[index].title),
+                    title: Text(
+                      todos[index].title,
+                      style: TextStyle(
+                          decoration: todos[index].completed
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none),
+                    ),
                     trailing: Checkbox(
                       value: todos[index].completed,
-                      onChanged: (val) {},
+                      onChanged: (val) {
+                        setState(() {
+                          todos[index].completed = !todos[index].completed;
+                        });
+                      },
                     ),
                   ),
                 ],
